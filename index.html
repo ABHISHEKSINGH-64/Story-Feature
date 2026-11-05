@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stories</title>
+  <link rel="stylesheet" href="story.css">
+</head>
+<body>
+  <div id="storyBar">
+    <button id="addStoryBtn" type="button" aria-label="Add a story">+</button>
+    <div id="storyList"></div>
+  </div>
+
+  <input id="storyFile" type="file" accept="image/*" hidden>
+
+  <div id="storyViewer" hidden>
+    <div id="progressBars"></div>
+    <button id="closeViewerBtn" type="button">Close</button>
+    <img id="storyImage" alt="Story">
+    <button id="prevZone" type="button" aria-label="Previous story"></button>
+    <button id="nextZone" type="button" aria-label="Next story"></button>
+  </div>
+
+  <script src="story.js" defer></script>
+</body>
+</html>
