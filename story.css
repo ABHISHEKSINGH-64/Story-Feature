@@ -5,22 +5,26 @@
 body {
   margin: 0;
   overflow-x: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #fff;
-  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #fafafa;
+  color: #262626;
 }
 
 button {
   font-family: inherit;
+  padding: 0;
 }
 
+/* Instagram Story Tray */
 #storyBar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   padding: 16px;
   overflow-x: auto;
   scrollbar-width: none;
+  background: #ffffff;
+  border-bottom: 1px solid #dbdbdb;
 }
 
 #storyBar::-webkit-scrollbar {
@@ -30,41 +34,102 @@ button {
 #storyList {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex-shrink: 0;
 }
 
-#addStoryBtn,
-.story-thumb {
-  width: 64px;
-  height: 64px;
+/* Story Item (Avatar + Label) */
+.story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
-  border-radius: 50%;
-}
-
-#addStoryBtn {
-  border: 2px solid #dbdbdb;
-  background: #fff;
-  color: #111;
-  font-size: 32px;
-  line-height: 1;
   cursor: pointer;
+  user-select: none;
 }
 
-.story-thumb {
-  padding: 0;
-  border: 3px solid #c13584;
-  background: #fff;
+.story-label {
+  font-size: 12px;
+  color: #262626;
+  max-width: 72px;
   overflow: hidden;
-  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  letter-spacing: 0.01em;
 }
 
+/* Add Story Button (Your Story) */
+#addStoryBtn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1px solid #dbdbdb;
+  background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e8e8e'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") no-repeat center 14px / 34px 34px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.15s ease;
+}
+
+#addStoryBtn:active {
+  transform: scale(0.95);
+}
+
+.plus-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: #0095f6;
+  color: #ffffff;
+  border: 2.5px solid #ffffff;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Story Thumbnails & Iconic Instagram Rings */
+.story-thumb {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  padding: 2.5px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  /* Instagram signature vibrant gradient ring for unseen stories */
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  transition: transform 0.15s ease, background 0.3s ease;
+}
+
+/* Gray ring after story is seen / viewed */
+.story-thumb.seen {
+  background: #dbdbdb;
+}
+
+.story-thumb:active {
+  transform: scale(0.95);
+}
+
+/* Inner white gap and circular picture */
 .story-thumb img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  background: #ffffff;
 }
 
 #addStoryBtn:focus-visible,
@@ -74,20 +139,109 @@ button {
   outline-offset: 3px;
 }
 
+/* Fullscreen Story Viewer */
 #storyViewer {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000;
+  background: #121212;
 }
 
 #storyViewer[hidden] {
   display: none !important;
 }
 
+/* Top Vignette Gradient Overlay (Progress Bars + Header) */
+#viewerTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 12px 14px 32px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Segmented Progress Bars */
+#progressBars {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 2.5px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #ffffff;
+}
+
+/* Viewer Header Info */
+#viewerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.viewer-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+}
+
+.viewer-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  background: #333 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") no-repeat center / cover;
+}
+
+.viewer-name {
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.viewer-time {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+#closeViewerBtn {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  padding: 4px;
+  opacity: 0.9;
+  transition: opacity 0.15s;
+}
+
+#closeViewerBtn:hover {
+  opacity: 1;
+}
+
+/* Story Display Image */
 #storyImage {
   max-width: 100%;
   max-height: 100%;
@@ -96,48 +250,13 @@ button {
   -webkit-user-drag: none;
 }
 
-#progressBars {
-  position: absolute;
-  top: 10px;
-  left: 8px;
-  right: 8px;
-  z-index: 2;
-  display: flex;
-  gap: 4px;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 3px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.progress-fill {
-  width: 0%;
-  height: 100%;
-  background: #fff;
-}
-
-#closeViewerBtn {
-  position: absolute;
-  top: 22px;
-  right: 12px;
-  z-index: 3;
-  border: none;
-  background: transparent;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
+/* Left & Right Tap Zones */
 #prevZone,
 #nextZone {
   position: absolute;
   top: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 5;
   width: 50%;
   border: none;
   background: transparent;
@@ -155,11 +274,22 @@ button {
 @media (max-width: 480px) {
   #storyBar {
     padding: 12px;
+    gap: 12px;
+  }
+
+  #storyList {
+    gap: 12px;
   }
 
   #addStoryBtn,
   .story-thumb {
-    width: 56px;
-    height: 56px;
+    width: 62px;
+    height: 62px;
+  }
+
+  .plus-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
   }
 }

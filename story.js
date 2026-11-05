@@ -11,7 +11,6 @@ const storyList = document.getElementById("storyList"),
   progressBars = document.getElementById("progressBars"),
   storyImage = document.getElementById("storyImage");
 
-// Storage Helpers
 function getStories() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -30,7 +29,6 @@ function deleteExpiredStories() {
   return active;
 }
 
-// Image Resizing & Upload
 function resizeImage(img) {
   let { width, height } = img;
   if (width > MAX_WIDTH || height > MAX_HEIGHT) {
@@ -59,7 +57,7 @@ function handleFileSelect(event) {
     img.onload = () => {
       try {
         const stories = getStories();
-        stories.push({ id: Date.now(), image: resizeImage(img), createdAt: Date.now() });
+        stories.push({ id: Date.now(), image: resizeImage(img), createdAt: Date.now(), seen: false });
         saveStories(stories);
         renderStories();
       } catch { alert("Could not read this image."); }
@@ -71,21 +69,17 @@ function handleFileSelect(event) {
   event.target.value = "";
 }
 
-// Render Story Tray
 function renderStories() {
   storyList.innerHTML = "";
   getStories().forEach((story, index) => {
-    const btn = document.createElement("button");
-    btn.className = "story-thumb";
-    btn.type = "button";
-    btn.setAttribute("aria-label", "View story");
-    btn.innerHTML = `<img src="${story.image}" alt="Story">`;
-    btn.onclick = () => openStoryViewer(index);
-    storyList.appendChild(btn);
+    const item = document.createElement("div");
+    item.className = "story-item";
+    item.innerHTML = `<button class="story-thumb ${story.seen ? 'seen' : ''}" type="button" aria-label="View story ${index + 1}"><img src="${story.image}" alt="Story"></button><span class="story-label">Story ${index + 1}</span>`;
+    item.firstElementChild.onclick = () => openStoryViewer(index);
+    storyList.appendChild(item);
   });
 }
 
-// Progress Bars & Timer
 function clearStoryTimer() {
   if (progressFrameId !== null) cancelAnimationFrame(progressFrameId);
   progressFrameId = null;
@@ -123,12 +117,26 @@ function startStoryTimer() {
   progressFrameId = requestAnimationFrame(tick);
 }
 
-// Viewer Controls
+function markAsSeen(index) {
+  const stories = getStories();
+  if (stories[index] && !stories[index].seen) {
+    stories[index].seen = true;
+    saveStories(stories);
+    const thumbs = document.querySelectorAll(".story-thumb");
+    if (thumbs[index]) thumbs[index].classList.add("seen");
+  }
+}
 function showStory(index) {
   const stories = getStories();
   if (!stories[index]) return closeStoryViewer();
   currentIndex = index;
+  markAsSeen(index);
   storyImage.src = stories[index].image;
+  const mins = Math.floor((Date.now() - stories[index].createdAt) / 60000);
+  const timeEl = document.getElementById("viewerTime");
+  if (timeEl) timeEl.textContent = mins < 1 ? "Just now" : mins < 60 ? `${mins}m` : `${Math.floor(mins / 60)}h`;
+  const avatar = document.getElementById("viewerAvatar");
+  if (avatar) avatar.style.backgroundImage = `url(${stories[index].image})`;
   clearStoryTimer();
   buildProgressBars(stories.length, index);
   startStoryTimer();
@@ -153,7 +161,6 @@ function goToPreviousStory() {
   showStory(currentIndex > 0 ? currentIndex - 1 : 0);
 }
 
-// Gestures & Clicks
 function handleZoneClick(action) {
   if (ignoreClick) { ignoreClick = false; return; }
   action();
@@ -167,10 +174,8 @@ function handleTouchStart(e) {
 function handleTouchEnd(e) {
   const touch = e.changedTouches[0];
   if (!touch) return;
-  const dx = touch.clientX - touchStartX;
-  const dy = touch.clientY - touchStartY;
+  const dx = touch.clientX - touchStartX, dy = touch.clientY - touchStartY;
   touchStartX = touchStartY = 0;
-
   if (Math.abs(dx) >= SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
     ignoreClick = true;
     setTimeout(() => { ignoreClick = false; }, 400);
@@ -179,7 +184,7 @@ function handleTouchEnd(e) {
   }
 }
 
-// Init
+// Initialization
 function initApp() {
   deleteExpiredStories();
   renderStories();

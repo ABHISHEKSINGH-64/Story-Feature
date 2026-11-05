@@ -8,15 +8,29 @@
 </head>
 <body>
   <div id="storyBar">
-    <button id="addStoryBtn" type="button" aria-label="Add a story">+</button>
+    <div class="story-item">
+      <button id="addStoryBtn" type="button" aria-label="Add a story">
+        <span class="plus-badge">+</span>
+      </button>
+      <span class="story-label">Your story</span>
+    </div>
     <div id="storyList"></div>
   </div>
 
   <input id="storyFile" type="file" accept="image/*" hidden>
 
   <div id="storyViewer" hidden>
-    <div id="progressBars"></div>
-    <button id="closeViewerBtn" type="button">Close</button>
+    <div id="viewerTop">
+      <div id="progressBars"></div>
+      <div id="viewerHeader">
+        <div class="viewer-user">
+          <div class="viewer-avatar" id="viewerAvatar"></div>
+          <span class="viewer-name">Your Story</span>
+          <span class="viewer-time" id="viewerTime">Just now</span>
+        </div>
+        <button id="closeViewerBtn" type="button" aria-label="Close viewer">✕</button>
+      </div>
+    </div>
     <img id="storyImage" alt="Story">
     <button id="prevZone" type="button" aria-label="Previous story"></button>
     <button id="nextZone" type="button" aria-label="Next story"></button>
